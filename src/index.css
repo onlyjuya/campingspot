@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family:'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* react-date-range 상단 네비/입력 영역 제거 */
+.rdrDateDisplayWrapper,
+.rdrMonthAndYearWrapper {
+  display: none !important;
+}
+
+/* 각 달 그리드 위의 타이틀 스타일 (9월 2025) */
+.rdrMonthName {
+  padding: 0.5rem 1rem;          /* py-2 px-4 */
+  font-weight: 600;              /* font-semibold */
+  font-size: 1rem;               /* text-base */
+  color: #111827;                /* text-gray-900 */
+}
