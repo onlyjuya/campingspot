@@ -1,12 +1,12 @@
 // src/components/DateRangePicker.jsx
 import React, { useState } from "react";
 import { DateRange } from "react-date-range";
+import { addMonths, format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { addMonths } from "date-fns";         // ← 이미 추가되어 있어야 합니다
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-const DateRangePicker = ({ onSave }) => {
+const DateRangePicker = ({ onSave, buttonText = "저장" }) => {
   const [range, setRange] = useState([
     { startDate: new Date(), endDate: new Date(), key: "selection" },
   ]);
@@ -16,7 +16,6 @@ const DateRangePicker = ({ onSave }) => {
 
   return (
     <div className="flex flex-col h-[70vh]">
-      {/* 상단 요약 */}
       <div className="p-4 border-b">
         <p className="text-sm text-gray-500">선택한 기간</p>
         <p className="text-base font-semibold">
@@ -24,13 +23,12 @@ const DateRangePicker = ({ onSave }) => {
         </p>
         {nights > 0 && (
           <p className="text-sm text-gray-600">
-            {range[0].startDate.toLocaleDateString("ko-KR")} ~{" "}
-            {range[0].endDate.toLocaleDateString("ko-KR")}
+            {format(range[0].startDate, "yyyy년 M월 dd일 (E)", { locale: ko })} ~{" "}
+            {format(range[0].endDate, "yyyy년 M월 dd일 (E)", { locale: ko })}
           </p>
         )}
       </div>
 
-      {/* 달력 (세로 스크롤) */}
       <div className="flex-1 overflow-y-auto">
         <DateRange
           editableDateInputs
@@ -39,22 +37,22 @@ const DateRangePicker = ({ onSave }) => {
           ranges={range}
           months={3}
           direction="vertical"
-          showDateDisplay={false}          // 상단 입력칸 숨김
-          showMonthAndYearPickers={false}  // 드롭다운 숨김
-          monthDisplayFormat="M월 yyyy"     // 각 달 타이틀 포맷
+          showDateDisplay={false}
+          showMonthAndYearPickers={false}
+          monthDisplayFormat="M월 yyyy"
           minDate={new Date()}
           maxDate={addMonths(new Date(), 3)}
           locale={ko}
+          className="w-full"
         />
       </div>
 
-      {/* 하단 저장 */}
-      <div className="p-4 border-t flex justify-end">
+      <div className="p-4 border-t">
         <button
           onClick={() => onSave(range[0])}
-          className="px-4 py-2 bg-emerald-500 text-white rounded-lg font-medium"
+          className="w-full px-4 py-3 bg-emerald-500 text-white rounded-lg font-semibold"
         >
-          저장
+          {buttonText}
         </button>
       </div>
     </div>

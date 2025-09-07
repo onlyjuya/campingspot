@@ -22,6 +22,9 @@ code {
   display: none !important;
 }
 
+.rdrMonth {
+  width: 100% !important;
+}
 /* 각 달 그리드 위의 타이틀 스타일 (9월 2025) */
 .rdrMonthName {
   padding: 0.5rem 1rem;          /* py-2 px-4 */

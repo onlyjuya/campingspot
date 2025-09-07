@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import Modal from "../components/Modal";
 import DateRangePicker from "../components/DateRangePicker";
+import GuestSelectModal from "../components/GuestSelectModal";
 import { Calendar, Users, Ruler, Square } from "lucide-react";
+import { differenceInCalendarDays, format } from "date-fns";
 
 const CampingZoneSelect = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isDateModalOpen, setDateModalOpen] = useState(false);
+  const [isGuestModalOpen, setGuestModalOpen] = useState(false);
+  
+  const [selectedRange, setSelectedRange] = useState(null); // {startDate, endDate}
+  const [selectedGuests, setSelectedGuests] = useState(null); // number
 
   const zones = [
     {
@@ -42,25 +48,33 @@ const CampingZoneSelect = () => {
     },
   ];
 
+  // 버튼 라벨: 날짜/박 (예: 09.18 - 09.20 / 2박), 없으면 기본 라벨
+  const dateLabel = (() => {
+    if (!selectedRange) return "일정 선택하기";
+    const nights = Math.max(
+      0,
+      differenceInCalendarDays(selectedRange.endDate, selectedRange.startDate)
+    );
+    const s = format(selectedRange.startDate, "MM.dd");
+    const e = format(selectedRange.endDate, "MM.dd");
+    return `${s} - ${e} / ${nights}박`;
+  })();
+
   return (
     <div id="select" className="p-4 bg-white mt-2">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-base font-semibold mb-3">
-            캠핑존 둘러보기 {zones.length}
+          캠핑존 둘러보기 {zones.length}
         </h2>
-        <button onClick={() => setModalOpen(true)}
-          className="bg-emerald-500 text-white px-3 py-2 rounded-lg">
-          일정 선택하기
+        
+        {/* 일정 선택 / 선택 후 라벨 보여주는 버튼 */}
+        <button
+          onClick={() => setDateModalOpen(true)}
+          className="flex items-center gap-2 bg-emerald-500 text-sm text-white px-3 py-2 rounded-lg font-semibold"
+        >
+          <Calendar size={18} />
+          {dateLabel}
         </button>
-
-        <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-            <DateRangePicker
-            onSave={(range) => {
-                console.log("선택된 날짜:", range);
-                setModalOpen(false);
-            }}
-            />
-        </Modal>
       </div>
 
       {/* 예약 가능 안내 */}
@@ -68,7 +82,7 @@ const CampingZoneSelect = () => {
         <div>
           <p className="text-green-600 font-medium">● 예약 가능</p>
           <p className="text-sm text-gray-600">11.03까지</p>
-        </div>       
+        </div>
       </div>
 
       {zones.map((zone) => (
@@ -78,11 +92,11 @@ const CampingZoneSelect = () => {
         >
           <div className="flex">
             <div className="flex-1 p-3">
-                <img
+              <img
                 src={zone.image}
                 alt={zone.name}
                 className="w-32 h-24 object-cover rounded-md"
-                />
+              />
             </div>
             <div className="flex-[2] p-3">
               <p className="text-xs text-gray-500">오토캠핑</p>
@@ -107,18 +121,38 @@ const CampingZoneSelect = () => {
               <Ruler size={14} /> {zone.size}
             </div>
             <div className="flex items-center gap-1">
-                <Square size={14} /> {zone.floorType}
+              <Square size={14} /> {zone.floorType}
             </div>
           </div>
         </div>
       ))}
 
-      {/* 모달 추가 */}
-      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+      {/* 일정 모달 */}
+      <Modal
+        isOpen={isDateModalOpen}
+        onClose={() => setDateModalOpen(false)}
+        zIndex={50}
+      >
         <DateRangePicker
+          buttonText="다음"
           onSave={(range) => {
-            console.log("선택된 날짜:", range);
-            setModalOpen(false);
+            setSelectedRange(range);            // 3. 일정 선택 저장
+            setGuestModalOpen(true);            // 4. 인원 모달 오픈
+          }}
+        />
+      </Modal>
+
+      {/* 인원 모달 */}
+     <Modal
+        isOpen={isGuestModalOpen}
+        onClose={() => setGuestModalOpen(false)}
+        zIndex={60}
+      >
+        <GuestSelectModal
+          onSave={(totalGuests) => {
+            setSelectedGuests(totalGuests);     // 5. 인원 저장
+            setGuestModalOpen(false);
+            setDateModalOpen(false);            // 6. 두 모달 모두 닫기
           }}
         />
       </Modal>
