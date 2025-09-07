@@ -13,7 +13,7 @@ import History from "./pages/History";
 function App() {
   return (
     <Router>
-      <div className="w-full max-w-lg mx-auto bg-gray-50 min-h-screen flex flex-col relative">
+      <div className="w-full max-w-md sm:max-w-lg mx-auto bg-gray-50 min-h-screen flex flex-col relative">
         <Header />
 
         <ScrollToTop />
